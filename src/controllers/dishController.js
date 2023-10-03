@@ -1,28 +1,31 @@
 const AppError = require("../utils/AppError");
 const knex = require("../database/knex");
-
+const diskStorage = require("../providers/DiskStorage")
 
 
 
 class dishController {
   async create(request, response) {
-    const {name, category, price, description, ingredients } = request.body;
+    const {dishData} = request.body;
     const user_id = request.user.id;
-    const image = "default.jpg"
-  
-
+    const DishData = JSON.parse(dishData)
+    
+    const DiskStorage = new diskStorage()
+    const filename = request.file.filename
+    const imgurl = await DiskStorage.saveFile(filename)
+   
     const newDish = {
-      imgurl: image,
-      name,
-      category,
-      price,
-      description,
+      imgurl,
+      name: DishData.name,
+      category: DishData.category,
+      price: DishData.price,
+      description: DishData.description,
       user_id,
     }
 
     const [data] = await knex("newdish").insert(newDish);
-
-    const ingr = ingredients.map((item) => {
+   
+    const ingr = DishData.ingredients.map((item) => {
       return {
         name: item,
         newdish_id: data,
@@ -32,7 +35,7 @@ class dishController {
 
     await knex("ingredients").insert(ingr);
 
-    return response.json({id_newdish: data});
+    return response.json();
 
   }
 

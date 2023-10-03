@@ -1,19 +1,19 @@
 const fs = require("fs")
 const path = require("path")
 
-const upload = require("../config/upload")
+const uploadConfig = require("../config/upload")
 
 class DiskStorage {
     async saveFile(file){
         await fs.promises.rename(
-            path.resolve(upload.tmp, file),
-            path.resolve(upload.upload, file)
+            path.resolve(uploadConfig.tmp, file),
+            path.resolve(uploadConfig.upload, file)
         )
         return file
     }
 
     async deleteFile(file){
-        const filePath = path.resolve(upload.upload, file)
+        const filePath = path.resolve(uploadConfig.upload, file)
 
         try{
             await fs.promises.stat(filePath)

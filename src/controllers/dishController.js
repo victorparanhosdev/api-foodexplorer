@@ -1,20 +1,21 @@
 const AppError = require("../utils/AppError");
 const knex = require("../database/knex");
-const uploadConfig = require("../config/upload")
+
+
+
+
 class dishController {
   async create(request, response) {
-    const { imgurl, name, category, price, description, ingredients } = request.body;
+    const {name, category, price, description, ingredients } = request.body;
     const user_id = request.user.id;
- 
-    const imgURL = "default.jpg"
     const newDish = {
-      imgurl: imgurl ? imgurl : imgURL,
       name,
       category,
       price,
       description,
       user_id,
-    };
+    }
+
     const [data] = await knex("newdish").insert(newDish);
 
     const ingr = ingredients.map((item) => {

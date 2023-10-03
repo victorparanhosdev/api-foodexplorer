@@ -8,7 +8,11 @@ class dishController {
   async create(request, response) {
     const {name, category, price, description, ingredients } = request.body;
     const user_id = request.user.id;
+    const image = "default.jpg"
+  
+
     const newDish = {
+      imgurl: image,
       name,
       category,
       price,
@@ -28,7 +32,8 @@ class dishController {
 
     await knex("ingredients").insert(ingr);
 
-    return response.json();
+    return response.json({id_newdish: data});
+
   }
 
   async update(request, response) {

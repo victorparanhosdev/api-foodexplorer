@@ -9,7 +9,7 @@ const MULTER = {
     storage: multer.diskStorage({
         destination: tmp,
         filename(request, file, cb){
-            const FileHash = crypto.randomBytes(10).toString("hex")
+            const FileHash = crypto.randomBytes(5).toString("hex")
             const fileName = `${FileHash}-${file.originalname}`
 
             return cb(null, fileName)

@@ -116,27 +116,24 @@ class dishController {
 
     return response.status(204).json();
   }
+ 
 
   async show(request, response) {
     const user_id = request.user.id;
     const { id } = request.params;
+
     const dish = await knex("newdish").where({ id }).first();
 
     if (!dish) {
       throw new AppError("Não existe esse prato");
     }
 
-    const ingredients = await knex("ingredients").where({
-      newdish_id: id,
-      user_id,
+    const ingredients = await knex("ingredients").where({newdish_id: id});
+
+  
+    return response.json({
+       dish, ingredients
     });
-
-    const show = {
-      dish,
-      ingredients,
-    };
-
-    return response.json(show);
   }
 
   async index(request, response) {

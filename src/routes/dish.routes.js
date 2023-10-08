@@ -17,7 +17,6 @@ const dishController = new DishController()
 dishRoutes.post("/", ensureAuthentication, adminAuthentication,  upload.single("uploadImg"), dishController.create)
 dishRoutes.put("/:id", ensureAuthentication, adminAuthentication, dishController.update)
 dishRoutes.delete("/:id", ensureAuthentication, adminAuthentication, dishController.delete)
-
 dishRoutes.get("/:id", ensureAuthentication, dishController.show)
 dishRoutes.get("/", ensureAuthentication, dishController.index)
 

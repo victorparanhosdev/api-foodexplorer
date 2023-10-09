@@ -3,7 +3,6 @@ const knex = require("../database/knex");
 const diskStorage = require("../providers/DiskStorage")
 
 
-
 class dishController {
   async create(request, response) {
     const {dishData} = request.body;
@@ -24,7 +23,8 @@ class dishController {
     }
 
     const [data] = await knex("newdish").insert(newDish);
-   
+    
+   if(DishData.ingredients.length !== 0) {
     const ingr = DishData.ingredients.map((item) => {
       return {
         name: item,
@@ -34,24 +34,19 @@ class dishController {
     });
 
     await knex("ingredients").insert(ingr);
+   }
+   
 
     return response.json();
 
   }
 
   async update(request, response) {
-    const user_id = request.user.id;
+    const user_id = request.user.id
     const { id } = request.params;
-    const { name, category, price, description, ingredients } = request.body;
-
-    const dish = await knex("newdish")
-      .where({ id: id, user_id: user_id })
-      .first();
-
-    if (dish.length === 0) {
-      throw new AppError("Esse item não existe");
-    }
-
+    const { name, category, price, description, ingredients } = request.body
+    const dish = await knex("newdish").where({id}).first();
+  
     const editDish = {
       name: name ?? dish.name,
       category: category ?? dish.category,
@@ -59,33 +54,19 @@ class dishController {
       description: description ?? dish.description,
     };
 
-    await knex("newdish").where({ id: id, user_id: user_id }).update(editDish);
+    await knex("newdish").where({id}).update(editDish);
 
-    if (!ingredients || ingredients.length == 0) {
-      throw new AppError("Ingredientes Obrigatório");
-    }
-    const existingIngredients = await knex("ingredients").where({
-      newdish_id: id,
-      user_id,
-    });
+    const existingIngredients = await knex("ingredients").where({newdish_id: id});
 
-    const existingIngredientNames = existingIngredients.map(
-      (ingredient) => ingredient.name
-    );
+    const existingIngredientNames = existingIngredients.map(ingredient => ingredient.name);
 
-    const removedIngredients = existingIngredientNames.filter(
-      (ingredientName) => !ingredients.includes(ingredientName)
-    );
+    const removedIngredients = existingIngredientNames.filter(ingredientName => !ingredients.includes(ingredientName));
 
     for (const ingredientName of removedIngredients) {
-      await knex("ingredients")
-        .where({ newdish_id: id, name: ingredientName, user_id })
-        .del();
+      await knex("ingredients").where({ newdish_id: id, name: ingredientName}).del();
     }
 
-    const newIngredients = ingredients.filter(
-      (ingredientName) => !existingIngredientNames.includes(ingredientName)
-    );
+    const newIngredients = ingredients.filter(ingredientName => !existingIngredientNames.includes(ingredientName));
 
     const ingr = newIngredients.map((item) => {
       return {

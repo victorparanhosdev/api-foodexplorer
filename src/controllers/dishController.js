@@ -100,7 +100,7 @@ class dishController {
  
 
   async show(request, response) {
-    const user_id = request.user.id;
+
     const { id } = request.params;
 
     const dish = await knex("newdish").where({ id }).first();
@@ -110,11 +110,11 @@ class dishController {
     }
 
     const ingredients = await knex("ingredients").where({newdish_id: id});
-
+    const result = {
+      dish, ingredients
+    }
   
-    return response.json({
-       dish, ingredients
-    });
+    return response.json(result);
   }
 
   async index(request, response) {

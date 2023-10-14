@@ -110,11 +110,9 @@ class dishController {
     }
 
     const ingredients = await knex("ingredients").where({newdish_id: id});
-    const result = {
-      dish, ingredients
-    }
+
   
-    return response.json(result);
+    return response.json({ ...dish, ingredients});
   }
 
   async index(request, response) {
